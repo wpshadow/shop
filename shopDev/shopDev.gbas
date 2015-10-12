@@ -6,50 +6,64 @@
 
 // SETCURRENTDIR("Media") // go to media files
 
-TYPE sprite_TYPE
-	id$
-	
+TYPE window_TYPE
+	activeID
 
-	
+
 ENDTYPE
+
 
 TYPE options_TYPE
 
-	FUNCTION init:
-		SYSTEMPOINTER TRUE
-		AUTOPAUSE FALSE
-	
-	ENDFUNCTION
+
 
 ENDTYPE
 
-GLOBAL sprite AS sprite_TYPE, options AS options_TYPE
+GLOBAL window AS window_TYPE, options AS options_TYPE
 
 main()
 
 FUNCTION main:
-	
-	options.init()
+
+	init()
 	loadAnimation()
-	
+
 	WHILE TRUE
-	
-		drawGrass()
-			
-	
-	
+
+
+
+
+
 		SHOWSCREEN
-		
+
 	WEND
-	
-	
+
+
+
+ENDFUNCTION
+
+FUNCTION init:
+
+	SYSTEMPOINTER TRUE
+	AUTOPAUSE FALSE
 
 ENDFUNCTION
 
 FUNCTION loadAnimation:
 	LOADANIM "media/gfx/textures.png", 0, 32, 32
 ENDFUNCTION
+
+FUNCTION drawWindow:
+
+	drawGrass()
+
+	SELECT window.activeID
+	CASE 0
 	
+	ENDSELECT
+
+ENDFUNCTION
+
 FUNCTION drawGrass:
 LOCAL tmpX, tmpY
 
@@ -59,4 +73,4 @@ LOCAL tmpX, tmpY
 		NEXT
 	NEXT
 
-ENDFUNCTION	
+ENDFUNCTION
