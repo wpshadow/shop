@@ -6,6 +6,12 @@
 
 // SETCURRENTDIR("Media") // go to media files
 
+
+
+TYPE gui_TYPE
+	
+ENDTYPE
+
 TYPE mouse_TYPE
 	x
 	y
@@ -21,6 +27,13 @@ TYPE window_TYPE
 
 ENDTYPE
 
+TYPE sprite_TYPE
+	id$
+ENDTYPE
+
+TYPE font_TYPE
+	id$
+ENDTYPE
 
 TYPE options_TYPE
 
@@ -29,6 +42,7 @@ TYPE options_TYPE
 ENDTYPE
 
 GLOBAL window AS window_TYPE, options AS options_TYPE, mouse AS mouse_TYPE
+GLOBAL font[] AS font_TYPE, gui AS gui_TYPE
 
 main()
 
@@ -39,9 +53,10 @@ FUNCTION main:
 
 	WHILE TRUE
 
-
-
-
+		drawWindow()
+		
+		guiPrint("blub", 0, 0, 0)
+		
 
 		SHOWSCREEN
 
@@ -59,7 +74,35 @@ FUNCTION init:
 ENDFUNCTION
 
 FUNCTION loadAnimation:
+LOCAL tmp, font$[], f AS font_TYPE
+	
+	DIMDATA font$[], "media/font/font_0.png", "media/font/font_1.png", "media/font/font_2.png", "media/font/font_3.png"
+
 	LOADANIM "media/gfx/textures.png", 0, 32, 32
+	loadCounter()
+	
+	FOR tmp = 0 TO LEN(font$[]) - 1
+		f.id$ = GENFONT()
+		
+		LOADFONT font$[tmp], f.id$
+		
+		DIMPUSH font[], f
+		loadCounter()
+	NEXT
+	
+	
+	
+	
+ENDFUNCTION
+
+FUNCTION loadCounter:
+STATIC counter
+	
+	INC counter, 1
+
+	PRINT "LOADING " + counter, 0, 0
+	SHOWSCREEN	
+
 ENDFUNCTION
 
 FUNCTION drawWindow:
@@ -120,5 +163,26 @@ STATIC b1_tmp, b2_tmp, press_init, press_timer_old
 	mouse.b2 = b2
 	mouse.b1_press = b1_press
 	mouse.b2_press = b2_press
+
+ENDFUNCTION
+
+FUNCTION guiPrint: inhalt$, fontID, posX, posY
+
+	IF fontID < 0 OR fontID > LEN(font[]) - 1
+		fontID = 0
+	ENDIF
+	
+	SETFONT font[fontID].id$
+	PRINT inhalt$, posX, posY
+
+ENDFUNCTION
+
+FUNCTION guiUpdate:
+
+	
+
+ENDFUNCTION
+
+FUNCTION guiClear:
 
 ENDFUNCTION
