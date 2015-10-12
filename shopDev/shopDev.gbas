@@ -5,3 +5,184 @@
 
 
 // SETCURRENTDIR("Media") // go to media files
+
+
+
+TYPE gui_TYPE
+	
+ENDTYPE
+
+TYPE mouse_TYPE
+	x
+	y
+	b1
+	b2
+	b1_press
+	b2_press
+ENDTYPE
+
+TYPE window_TYPE
+	activeID
+
+
+ENDTYPE
+
+TYPE sprite_TYPE
+	id$
+ENDTYPE
+
+TYPE font_TYPE
+	id$
+ENDTYPE
+
+TYPE options_TYPE
+
+
+
+ENDTYPE
+
+GLOBAL window AS window_TYPE, options AS options_TYPE, mouse AS mouse_TYPE
+GLOBAL font[] AS font_TYPE, gui AS gui_TYPE
+
+main()
+
+FUNCTION main:
+
+	init()
+	loadAnimation()
+
+	WHILE TRUE
+
+		drawWindow()
+		
+		guiPrint("blub", 0, 0, 0)
+		
+
+		SHOWSCREEN
+
+	WEND
+
+
+
+ENDFUNCTION
+
+FUNCTION init:
+
+	SYSTEMPOINTER TRUE
+	AUTOPAUSE FALSE
+
+ENDFUNCTION
+
+FUNCTION loadAnimation:
+LOCAL tmp, font$[], f AS font_TYPE
+	
+	DIMDATA font$[], "media/font/font_0.png", "media/font/font_1.png", "media/font/font_2.png", "media/font/font_3.png"
+
+	LOADANIM "media/gfx/textures.png", 0, 32, 32
+	loadCounter()
+	
+	FOR tmp = 0 TO LEN(font$[]) - 1
+		f.id$ = GENFONT()
+		
+		LOADFONT font$[tmp], f.id$
+		
+		DIMPUSH font[], f
+		loadCounter()
+	NEXT
+	
+	
+	
+	
+ENDFUNCTION
+
+FUNCTION loadCounter:
+STATIC counter
+	
+	INC counter, 1
+
+	PRINT "LOADING " + counter, 0, 0
+	SHOWSCREEN	
+
+ENDFUNCTION
+
+FUNCTION drawWindow:
+
+	drawGrass()
+
+	SELECT window.activeID
+	CASE 0
+	
+	ENDSELECT
+
+ENDFUNCTION
+
+FUNCTION drawGrass:
+LOCAL tmpX, tmpY
+
+	FOR tmpY = 0 TO 23
+		FOR tmpX = 0 TO 31
+			DRAWANIM 0, 831, 0 + (tmpX * 32), 0 + (tmpY * 32)
+		NEXT
+	NEXT
+
+ENDFUNCTION
+
+FUNCTION updateMouse:
+LOCAL x, y, b1, b2, b1_press, b2_press
+STATIC b1_tmp, b2_tmp, press_init, press_timer_old
+
+	MOUSESTATE x, y, b1_press, b2_press
+
+		mouse.x = x
+		mouse.y = y
+
+	IF b1_press = FALSE
+		b1 = FALSE
+		press_init = FALSE
+	ENDIF
+	IF b1_press = TRUE
+		b1_tmp = TRUE
+		IF press_init = FALSE
+			press_timer_old = GETTIMERALL() + 500
+			press_init = TRUE
+		ENDIF
+	ENDIF
+	IF b1_press = FALSE AND b1_tmp = TRUE AND GETTIMERALL() <= press_timer_old
+		b1 = TRUE
+		b1_tmp = FALSE
+	ENDIF
+
+	IF b2_press = FALSE THEN b2 = FALSE
+	IF b2_press = TRUE THEN b2_tmp = TRUE
+	IF b2_press = FALSE AND b2_tmp = TRUE
+		b2 = TRUE
+		b2_tmp = FALSE
+	ENDIF
+
+	mouse.b1 = b1
+	mouse.b2 = b2
+	mouse.b1_press = b1_press
+	mouse.b2_press = b2_press
+
+ENDFUNCTION
+
+FUNCTION guiPrint: inhalt$, fontID, posX, posY
+
+	IF fontID < 0 OR fontID > LEN(font[]) - 1
+		fontID = 0
+	ENDIF
+	
+	SETFONT font[fontID].id$
+	PRINT inhalt$, posX, posY
+
+ENDFUNCTION
+
+FUNCTION guiUpdate:
+
+	
+
+ENDFUNCTION
+
+FUNCTION guiClear:
+
+ENDFUNCTION
