@@ -5,3 +5,58 @@
 
 
 // SETCURRENTDIR("Media") // go to media files
+
+TYPE sprite_TYPE
+	id$
+	
+
+	
+ENDTYPE
+
+TYPE options_TYPE
+
+	FUNCTION init:
+		SYSTEMPOINTER TRUE
+		AUTOPAUSE FALSE
+	
+	ENDFUNCTION
+
+ENDTYPE
+
+GLOBAL sprite AS sprite_TYPE, options AS options_TYPE
+
+main()
+
+FUNCTION main:
+	
+	options.init()
+	loadAnimation()
+	
+	WHILE TRUE
+	
+		drawGrass()
+			
+	
+	
+		SHOWSCREEN
+		
+	WEND
+	
+	
+
+ENDFUNCTION
+
+FUNCTION loadAnimation:
+	LOADANIM "media/gfx/textures.png", 0, 32, 32
+ENDFUNCTION
+	
+FUNCTION drawGrass:
+LOCAL tmpX, tmpY
+
+	FOR tmpY = 0 TO 23
+		FOR tmpX = 0 TO 31
+			DRAWANIM 0, 831, 0 + (tmpX * 32), 0 + (tmpY * 32)
+		NEXT
+	NEXT
+
+ENDFUNCTION	
