@@ -6,10 +6,16 @@
 
 // SETCURRENTDIR("Media") // go to media files
 
-
+TYPE text_TYPE
+	content$
+	fontID
+	posX
+	posY
+ENDTYPE
 
 TYPE gui_TYPE
-	
+	text AS text_TYPE
+	typ
 ENDTYPE
 
 TYPE mouse_TYPE
@@ -42,7 +48,7 @@ TYPE options_TYPE
 ENDTYPE
 
 GLOBAL window AS window_TYPE, options AS options_TYPE, mouse AS mouse_TYPE
-GLOBAL font[] AS font_TYPE, gui AS gui_TYPE
+GLOBAL font[] AS font_TYPE, gui[] AS gui_TYPE
 
 main()
 
@@ -54,9 +60,10 @@ FUNCTION main:
 	WHILE TRUE
 
 		drawWindow()
+
 		
-		guiPrint("blub", 0, 0, 0)
 		
+
 
 		SHOWSCREEN
 
@@ -75,33 +82,33 @@ ENDFUNCTION
 
 FUNCTION loadAnimation:
 LOCAL tmp, font$[], f AS font_TYPE
-	
+
 	DIMDATA font$[], "media/font/font_0.png", "media/font/font_1.png", "media/font/font_2.png", "media/font/font_3.png"
 
 	LOADANIM "media/gfx/textures.png", 0, 32, 32
 	loadCounter()
-	
+
 	FOR tmp = 0 TO LEN(font$[]) - 1
 		f.id$ = GENFONT()
-		
+
 		LOADFONT font$[tmp], f.id$
-		
+
 		DIMPUSH font[], f
 		loadCounter()
 	NEXT
-	
-	
-	
-	
+
+
+
+
 ENDFUNCTION
 
 FUNCTION loadCounter:
 STATIC counter
-	
+
 	INC counter, 1
 
 	PRINT "LOADING " + counter, 0, 0
-	SHOWSCREEN	
+	SHOWSCREEN
 
 ENDFUNCTION
 
@@ -111,8 +118,11 @@ FUNCTION drawWindow:
 
 	SELECT window.activeID
 	CASE 0
-	
+
 	ENDSELECT
+	
+	
+	guiUpdate()
 
 ENDFUNCTION
 
@@ -171,7 +181,7 @@ FUNCTION guiPrint: inhalt$, fontID, posX, posY
 	IF fontID < 0 OR fontID > LEN(font[]) - 1
 		fontID = 0
 	ENDIF
-	
+
 	SETFONT font[fontID].id$
 	PRINT inhalt$, posX, posY
 
@@ -179,10 +189,40 @@ ENDFUNCTION
 
 FUNCTION guiUpdate:
 
-	
+	IF LEN(gui[]) > 0
+		FOREACH g IN gui[]
+			SELECT g.typ
+			CASE 0
+				guiPrint(g.text.content$, g.text.fontID, g.text.posX, g.text.posY)
+			
+			
+			ENDSELECT
+		NEXT
+	ENDIF
 
 ENDFUNCTION
 
 FUNCTION guiClear:
+
+	FOREACH g IN gui[]
+		DELETE g
+	NEXT
+
+ENDFUNCTION
+
+FUNCTION guiAddText: inhalt$, fontID, posX, posY
+LOCAL g AS gui_TYPE
+
+	g.text.content$ = inhalt$
+	
+	IF fontID < 0 OR fontID > LEN(font[]) - 1
+		fontID = 0
+	ENDIF
+	
+	g.text.fontID = fontID
+	g.text.posX = posX
+	g.text.posY = posY
+	
+	DIMPUSH gui[], g
 
 ENDFUNCTION
