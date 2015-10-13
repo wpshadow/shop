@@ -6,16 +6,43 @@
 
 // SETCURRENTDIR("Media") // go to media files
 
-TYPE text_TYPE
+TYPE position_TYPE
+	x
+	y
+ENDTYPE
+
+TYPE guiText_TYPE
 	content$
 	fontID
-	posX
-	posY
+	pos AS position_TYPE
+ENDTYPE
+
+TYPE guiButton_TYPE
+	text AS guiText_TYPE
+	pos AS position_TYPE
+	length
+	height
+	textAlignment
 ENDTYPE
 
 TYPE gui_TYPE
-	text AS text_TYPE
+	text AS guiText_TYPE
+	button AS guiButton_TYPE
 	typ
+ENDTYPE
+
+TYPE color_TYPE
+	r
+	g
+	b
+ENDTYPE
+
+TYPE guiColor_TYPE
+	border AS color_TYPE
+	
+	buttonInactive AS color_TYPE
+	buttonMouseover AS color_TYPE
+	buttonClick AS color_TYPE
 ENDTYPE
 
 TYPE mouse_TYPE
@@ -48,7 +75,7 @@ TYPE options_TYPE
 ENDTYPE
 
 GLOBAL window AS window_TYPE, options AS options_TYPE, mouse AS mouse_TYPE
-GLOBAL font[] AS font_TYPE, gui[] AS gui_TYPE
+GLOBAL font[] AS font_TYPE, gui[] AS gui_TYPE, guiColor AS guiColor_TYPE
 
 main()
 
@@ -77,6 +104,8 @@ FUNCTION init:
 
 	SYSTEMPOINTER TRUE
 	AUTOPAUSE FALSE
+	
+	guiInit()
 
 ENDFUNCTION
 
@@ -89,12 +118,13 @@ LOCAL tmp, font$[], f AS font_TYPE
 	loadCounter()
 
 	FOR tmp = 0 TO LEN(font$[]) - 1
+		loadCounter()
+		
 		f.id$ = GENFONT()
 
 		LOADFONT font$[tmp], f.id$
 
 		DIMPUSH font[], f
-		loadCounter()
 	NEXT
 
 
@@ -106,7 +136,8 @@ FUNCTION loadCounter:
 STATIC counter
 
 	INC counter, 1
-
+	
+	SETFONT 0
 	PRINT "LOADING " + counter, 0, 0
 	SHOWSCREEN
 
@@ -193,9 +224,9 @@ FUNCTION guiUpdate:
 		FOREACH g IN gui[]
 			SELECT g.typ
 			CASE 0
-				guiPrint(g.text.content$, g.text.fontID, g.text.posX, g.text.posY)
-			
-			
+				guiPrint(g.text.content$, g.text.fontID, g.text.pos.x, g.text.pos.y)
+			CASE 1
+				
 			ENDSELECT
 		NEXT
 	ENDIF
@@ -210,6 +241,18 @@ FUNCTION guiClear:
 
 ENDFUNCTION
 
+FUNCTION guiInit:
+
+	guiColor.buttonInactive.r = 0
+	guiColor.buttonInactive.g = 32
+	guiColor.buttonInactive.b = 64
+
+	guiColor.buttonMouseover.r = 0
+	guiColor.buttonMouseover.g = 64
+	guiColor.buttonMouseover.b = 128
+
+ENDFUNCTION
+
 FUNCTION guiAddText: inhalt$, fontID, posX, posY
 LOCAL g AS gui_TYPE
 
@@ -220,9 +263,26 @@ LOCAL g AS gui_TYPE
 	ENDIF
 	
 	g.text.fontID = fontID
-	g.text.posX = posX
-	g.text.posY = posY
+	g.text.pos.x = posX
+	g.text.pos.y = posY
 	
 	DIMPUSH gui[], g
 
 ENDFUNCTION
+
+FUNCTION guiAddButton: inhalt$, fontID, posX, posY, length, height
+LOCAL g AS gui_TYPE
+
+	g.button.text.content$ = inhalt$
+	
+	IF fontID < 0 OR fontID > LEN(font[]) - 1
+		fontID = 0
+	ENDIF
+	
+	g.button.text.fontID = fontID
+	g.button.pos.x = posX
+	g.button.pos.y = posY
+	
+
+ENDFUNCTION
+
