@@ -39,7 +39,7 @@ ENDTYPE
 
 TYPE guiColor_TYPE
 	border AS color_TYPE
-	
+
 	buttonInactive AS color_TYPE
 	buttonMouseover AS color_TYPE
 	buttonClick AS color_TYPE
@@ -88,8 +88,8 @@ FUNCTION main:
 
 		drawWindow()
 
-		
-		
+
+
 
 
 		SHOWSCREEN
@@ -104,7 +104,7 @@ FUNCTION init:
 
 	SYSTEMPOINTER TRUE
 	AUTOPAUSE FALSE
-	
+
 	guiInit()
 
 ENDFUNCTION
@@ -119,7 +119,7 @@ LOCAL tmp, font$[], f AS font_TYPE
 
 	FOR tmp = 0 TO LEN(font$[]) - 1
 		loadCounter()
-		
+
 		f.id$ = GENFONT()
 
 		LOADFONT font$[tmp], f.id$
@@ -136,7 +136,7 @@ FUNCTION loadCounter:
 STATIC counter
 
 	INC counter, 1
-	
+
 	SETFONT 0
 	PRINT "LOADING " + counter, 0, 0
 	SHOWSCREEN
@@ -151,8 +151,8 @@ FUNCTION drawWindow:
 	CASE 0
 
 	ENDSELECT
-	
-	
+
+
 	guiUpdate()
 
 ENDFUNCTION
@@ -226,7 +226,7 @@ FUNCTION guiUpdate:
 			CASE 0
 				guiPrint(g.text.content$, g.text.fontID, g.text.pos.x, g.text.pos.y)
 			CASE 1
-				
+
 			ENDSELECT
 		NEXT
 	ENDIF
@@ -257,15 +257,15 @@ FUNCTION guiAddText: inhalt$, fontID, posX, posY
 LOCAL g AS gui_TYPE
 
 	g.text.content$ = inhalt$
-	
+
 	IF fontID < 0 OR fontID > LEN(font[]) - 1
 		fontID = 0
 	ENDIF
-	
+
 	g.text.fontID = fontID
 	g.text.pos.x = posX
 	g.text.pos.y = posY
-	
+
 	DIMPUSH gui[], g
 
 ENDFUNCTION
@@ -274,15 +274,21 @@ FUNCTION guiAddButton: inhalt$, fontID, posX, posY, length, height
 LOCAL g AS gui_TYPE
 
 	g.button.text.content$ = inhalt$
-	
+
 	IF fontID < 0 OR fontID > LEN(font[]) - 1
 		fontID = 0
 	ENDIF
-	
+
 	g.button.text.fontID = fontID
 	g.button.pos.x = posX
 	g.button.pos.y = posY
-	
+
+
+ENDFUNCTION
+
+FUNCTION guiDrawButton: inhalt$, fontID, posX, posY, length, height
+
+	DRAWRECT
 
 ENDFUNCTION
 
